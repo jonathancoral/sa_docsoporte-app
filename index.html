@@ -40,17 +40,26 @@
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-    /* CORRECCIÓN 1: OCULTAR SCROLLBAR PARA APARIENCIA NATIVA */
-    body::-webkit-scrollbar { display: none; }
-    body {
-      margin: 0;
-      background-color: var(--md-sys-color-surface-container);
-      color: var(--md-sys-color-on-surface);
-      font-family: var(--font-brand);
-      padding-bottom: 120px;
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE/Edge */
-    }
+    /* CORRECCIÓN 1: OCULTAR SCROLLBAR (Nativo & Webkit) */
+        html, body {
+          scrollbar-width: none;       /* Firefox */
+          -ms-overflow-style: none;    /* IE y Edge */
+          overflow-x: hidden;          /* Evita scroll horizontal accidental */
+        }
+        
+        /* Ocultar en Chrome, Safari y Opera */
+        html::-webkit-scrollbar, body::-webkit-scrollbar {
+          display: none;
+        }
+    
+        /* ESTILOS DEL BODY */
+        body {
+          margin: 0;
+          background-color: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface);
+          font-family: var(--font-brand);
+          padding-bottom: 120px;
+        }
 
     /* CORRECCIÓN 2: ALINEACIÓN VERTICAL DEL HEADER */
     header {
