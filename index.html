@@ -55,7 +55,7 @@
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 16px;
     }
 
@@ -242,13 +242,54 @@
     .spinner { width: 40px; height: 40px; border: 4px solid #fff; border-top-color: var(--md-sys-color-primary); border-radius: 50%; animation: spin 1s infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+/* 3. TOTAL GENERAL: Diseño M3 Refinado */
     .total-fab {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: #1a1c1e; color: white;
-      padding: 12px 24px; border-radius: var(--shape-corner-full);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 20px; z-index: 100; min-width: 280px;
+      position: fixed; 
+      bottom: 24px; 
+      left: 50%; 
+      transform: translateX(-50%);
+      /* Usamos Inverse Surface de M3 (Gris muy oscuro, no negro puro #000) */
+      background: #313033; 
+      color: #f4eff4; /* Blanco hueso suave */
+      padding: 12px 24px 12px 20px; /* Un poco más de aire a los lados */
+      border-radius: 16px; /* M3 usa esquinas menos redondas en FABs grandes a veces, pero full round está bien. Probemos 16px para variar o mantén full */
+      border-radius: 999px; /* Mantenemos estilo cápsula */
+      
+      box-shadow: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3); /* Elevación 3 */
+      
+      display: flex; 
+      align-items: center; 
+      gap: 16px; 
+      z-index: 100; 
+      min-width: auto; /* Dejamos que el contenido defina el ancho */
+    }
+
+    /* Etiqueta "Total" más suave */
+    .label-total {
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        color: rgba(244, 239, 244, 0.7); /* Blanco con opacidad */
+        text-transform: uppercase;
+    }
+
+    /* El número, el protagonista */
+    .valor-total-fab {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
+        font-family: 'Roboto Flex', sans-serif;
+    }
+
+    /* 2. OCULTAR SCROLLBAR (Para que parezca app nativa) */
+    /* Para Chrome, Safari y Opera */
+    body::-webkit-scrollbar {
+      display: none;
+    }
+    /* Para IE, Edge y Firefox */
+    body {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
     }
   </style>
 </head>
@@ -284,9 +325,9 @@
   </main>
 
   <div class="total-fab" id="totalFab" style="display: none;">
-    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity:0.8;">Total General</span>
-    <span id="txtTotal" style="font-size: 18px; font-weight: 700;">$ 0</span>
-  </div>
+      <span class="label-total">Total</span>
+      <span id="txtTotal" class="valor-total-fab">$ 0</span>
+    </div>
 
   <div id="aboutModal" class="dialog-overlay" onclick="cerrarModal(event)">
     <div class="dialog-card">
