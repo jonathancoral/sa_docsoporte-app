@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Documentos Soporte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Consulta de saldos y documentos soporte">
+  <meta name="theme-color" content="#dfe3eb">
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-apple.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+  <style>
+    /* SISTEMA DE DISEÑO M3 */
+    :root {
+      /* Palette: Blue/Slate Tones (Professional & Calm) */
+      --md-sys-color-primary: #004a77;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #c2e7ff;
+      --md-sys-color-on-primary-container: #001d35;
+      
+      --md-sys-color-surface: #f8f9ff;
+      --md-sys-color-surface-container: #eceff8; /* Fondo general más suave */
+      --md-sys-color-surface-container-high: #ffffff; /* Tarjetas */
+      --md-sys-color-on-surface: #191c20;
+      --md-sys-color-on-surface-variant: #44474e;
+      
+      --md-sys-color-outline: #74777f;
+      --md-sys-color-outline-variant: #c4c6d0;
+
+      --md-sys-color-error: #ba1a1a;
+      --md-sys-color-error-container: #ffdad6;
+      
+      /* Typography System (Expressive) */
+      --md-sys-typescale-headline-large: 400 32px/40px 'Roboto Flex', sans-serif;
+      --md-sys-typescale-title-medium: 500 16px/24px 'Roboto Flex', sans-serif;
+      --md-sys-typescale-body-medium: 400 14px/20px 'Roboto Flex', sans-serif;
+      --md-sys-typescale-label-large: 500 14px/20px 'Roboto Flex', sans-serif;
+
+      /* Shapes */
+      --md-sys-shape-corner-extra-large: 28px;
+      --md-sys-shape-corner-large: 16px;
+      --md-sys-shape-corner-full: 9999px;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      margin: 0;
+      background-color: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      font-family: 'Roboto Flex', sans-serif;
+      padding-bottom: 100px; /* Espacio para el Total Flotante */
+    }
+
+    /* M3 CHECK: El header no debe ser una barra sólida aburrida. 
+       M3 Expressive usa tipografía grande y mucho aire alrededor. */
+    header {
+      padding: 64px 24px 24px 24px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font: var(--md-sys-typescale-headline-large);
+      margin: 0;
+      color: var(--md-sys-color-on-surface);
+    }
+    
+    .subtitle {
+      font: var(--md-sys-typescale-body-medium);
+      color: var(--md-sys-color-on-surface-variant);
+      margin-top: 8px;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    main {
+      padding: 0 16px;
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* M3 CHECK: Search Bar. 
+       El input rectangular antiguo viola M3. 
+       Usamos una "Barra" totalmente redondeada (Pill shape) con elevación suave. */
+    .search-bar {
+      background: var(--md-sys-color-surface-container-high);
+      border-radius: var(--md-sys-shape-corner-full);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12); /* Elevation 1 */
+      transition: box-shadow 0.2s;
+    }
+
+    .search-bar:focus-within {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Elevation 2 on active */
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      font: var(--md-sys-typescale-body-large); /* 16px */
+      flex: 1;
+      outline: none;
+      color: var(--md-sys-color-on-surface);
+    }
+    
+    .icon {
+      font-family: 'Material Symbols Rounded';
+      font-size: 24px;
+      color: var(--md-sys-color-on-surface-variant);
+      user-select: none;
+    }
+
+    /* M3 CHECK: Filtros. 
+       Eliminé el <select> HTML nativo. 
+       M3 usa "Filter Chips". Son botones táctiles, fáciles de presionar en móvil y visualmente claros. */
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      padding: 0 8px;
+      overflow-x: auto; /* Scroll horizontal en móviles pequeños */
+      scrollbar-width: none;
+    }
+
+    .chip {
+      background: transparent;
+      border: 1px solid var(--md-sys-color-outline);
+      color: var(--md-sys-color-on-surface-variant);
+      padding: 6px 16px;
+      border-radius: 8px; /* M3 Chip radius */
+      font: var(--md-sys-typescale-label-large);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .chip.selected {
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      border-color: transparent;
+    }
+    
+    .chip:active { transform: scale(0.95); }
+
+    /* M3 CHECK: Listado de Datos.
+       Eliminé la <table>. Las tablas horizontales en móvil son mala experiencia.
+       Usamos un patrón de "Listas" donde cada item es una tarjeta que se expande. */
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: var(--md-sys-color-surface-container-high);
+      border-radius: var(--md-sys-shape-corner-large);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden; /* Para el efecto ripple */
+      transition: background-color 0.2s;
+    }
+
+    .card:active { background-color: var(--md-sys-color-surface-container); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .provider-name {
+      font: var(--md-sys-typescale-title-medium);
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 4px;
+    }
+
+    .provider-nit {
+      font-size: 12px;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .card-value {
+      font: var(--md-sys-typescale-title-medium);
+      color: var(--md-sys-color-primary);
+      font-weight: 600;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      align-items: center;
+    }
+
+    /* Badge para vencidos */
+    .badge-vencido {
+      background: var(--md-sys-color-error-container);
+      color: var(--md-sys-color-error);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    /* Estado oculto para detalles */
+    .details {
+      display: none;
+      padding-top: 12px;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      animation: expand 0.3s ease;
+    }
+    
+    @keyframes expand { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* M3 CHECK: Total Flotante.
+       En lugar de un footer al final del scroll, usamos una "Bottom App Bar" modificada
+       o un FAB extendido, siempre visible. Importante para apps financieras. */
+    .total-floating {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--md-sys-color-on-surface);
+      color: var(--md-sys-color-surface);
+      padding: 12px 24px;
+      border-radius: var(--md-sys-shape-corner-full);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      min-width: 300px;
+      justify-content: space-between;
+    }
+
+    .fab-search {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+        background: var(--md-sys-color-primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    /* Estado de Carga (Skeleton/Spinner) */
+    .loader {
+      display: none;
+      margin: 40px auto;
+      border: 4px solid var(--md-sys-color-surface-container);
+      border-top: 4px solid var(--md-sys-color-primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Estilos Desktop - Adaptación Grid */
+    @media (min-width: 768px) {
+      .results-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Doc. Soporte</h1>
+    <div class="subtitle">Consulta de estado y vencimientos</div>
+  </header>
+
+  <main>
+    <div class="search-bar">
+      <span class="icon">search</span>
+      <input type="text" id="inputBusqueda" placeholder="Buscar NIT o nombre..." onkeypress="handleEnter(event)">
+      <button class="fab-search" onclick="iniciarBusqueda()">
+        <span class="icon" style="color: white; font-size: 20px;">arrow_forward</span>
+      </button>
+    </div>
+
+    <div class="filter-group">
+      <button class="chip selected" onclick="selectFilter(this, '1')">Todos</button>
+      <button class="chip" onclick="selectFilter(this, '2')">Vencidos</button>
+      <button class="chip" onclick="selectFilter(this, '3')">Corrientes</button>
+    </div>
+
+    <div class="loader" id="loader"></div>
+    <div class="results-list" id="contenedorResultados"></div>
+  </main>
+
+  <div class="total-floating" id="totalFloating" style="display: none;">
+    <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Total</span>
+    <span style="font-size: 18px; font-weight: 600;" id="valorTotal">$ 0</span>
+  </div>
+
+  <script>
+    // --- LÓGICA DEL FRONTEND ---
+    
+    // IMPORTANTE: REEMPLAZA ESTA URL CON LA DE TU WEB APP DE APPS SCRIPT PUBLICADA
+    const API_URL = "https://script.google.com/macros/s/AKfycby4-O3s4fmR3q2tEdcC9IfChcBRGVlvbk8SimpurfhMfEU-p4Z0FxYWYLfqdGEFDY9m/exec";
+
+    let filtroActual = "1";
+
+    function handleEnter(e) {
+      if (e.key === 'Enter') iniciarBusqueda();
+    }
+
+    function selectFilter(btn, valor) {
+      // UI Update
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      btn.classList.add('selected');
+      filtroActual = valor;
+      // Trigger automático si ya hay texto
+      /* Opcional: Ejecutar búsqueda inmediata */
+    }
+
+    async function iniciarBusqueda() {
+      const criterio = document.getElementById('inputBusqueda').value;
+      const loader = document.getElementById('loader');
+      const container = document.getElementById('contenedorResultados');
+      const totalBar = document.getElementById('totalFloating');
+
+      if(!criterio && filtroActual === "1") return alert("Ingresa un criterio de búsqueda");
+
+      // Reset UI
+      container.innerHTML = '';
+      totalBar.style.display = 'none';
+      loader.style.display = 'block';
+
+      try {
+        // Fetch usando la API Segura
+        const response = await fetch(`${API_URL}?criterio=${encodeURIComponent(criterio)}&opcion=${filtroActual}`, {
+            method: 'GET',
+            redirect: "follow" // CRUCIAL PARA APPS SCRIPT
+        });
+        
+        const res = await response.json();
+
+        loader.style.display = 'none';
+
+        if (!res.success) {
+          container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--md-sys-color-error)">${res.error || 'Error desconocido'}</div>`;
+          return;
+        }
+
+        if (!res.data || res.data.length === 0) {
+          container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--md-sys-color-on-surface-variant)">No se encontraron documentos.</div>`;
+          return;
+        }
+
+        renderResultados(res.data);
+        document.getElementById('valorTotal').innerText = formatearMoneda(res.total);
+        totalBar.style.display = 'flex';
+
+      } catch (error) {
+        loader.style.display = 'none';
+        alert("Error de conexión: " + error.message);
+      }
+    }
+
+    function renderResultados(datos) {
+      const container = document.getElementById('contenedorResultados');
+      
+      datos.forEach(item => {
+        const esVencido = parseInt(item.dias_vencidos) > 0;
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.onclick = () => {
+          const det = card.querySelector('.details');
+          det.style.display = det.style.display === 'block' ? 'none' : 'block';
+        };
+
+        card.innerHTML = `
+          <div class="card-header">
+            <div>
+              <div class="provider-name">${item.nombre_tercero}</div>
+              <div class="provider-nit">NIT: ${item.NIT}</div>
+            </div>
+            <div class="card-value">${formatearMoneda(item.valor)}</div>
+          </div>
+          <div class="card-meta">
+            <span>${formatearFecha(item.fecha_docto)}</span>
+            <span>•</span>
+            <span>Doc: ${item.docto_causacion}</span>
+            ${esVencido ? `<span class="badge-vencido">${item.dias_vencidos} días</span>` : ''}
+          </div>
+          <div class="details">
+            <strong>Observación:</strong><br>
+            ${item.nota_saldo_abierto || 'Sin notas registradas.'}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+    function formatearMoneda(val) { return formatter.format(val); }
+
+    function formatearFecha(dateStr) {
+      if (!dateStr) return "-";
+      let s = String(dateStr);
+      // Manejo formato YYYYMMDD típico de ERPs
+      if (s.length === 8 && !s.includes('-')) {
+        return `${s.substring(6,8)}/${s.substring(4,6)}/${s.substring(0,4)}`;
+      }
+      return s.split('T')[0];
+    }
+    
+    // Registro del Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('Service Worker Registered'));
+    }
+  </script>
+</body>
+</html>
