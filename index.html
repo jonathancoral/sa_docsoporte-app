@@ -40,27 +40,31 @@
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+    /* CORRECCIÓN 1: OCULTAR SCROLLBAR PARA APARIENCIA NATIVA */
+    body::-webkit-scrollbar { display: none; }
     body {
       margin: 0;
       background-color: var(--md-sys-color-surface-container);
       color: var(--md-sys-color-on-surface);
       font-family: var(--font-brand);
       padding-bottom: 120px;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
     }
 
-    /* HEADER AJUSTADO (Flex) */
+    /* CORRECCIÓN 2: ALINEACIÓN VERTICAL DEL HEADER */
     header {
       padding: 32px 20px 20px 20px;
       max-width: 800px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: center; /* Centrado verticalmente */
       gap: 16px;
     }
 
     .header-text h1 {
-      font-size: 28px; /* Ajustado ligeramente para móviles */
+      font-size: 28px;
       font-weight: 400;
       margin: 0;
       letter-spacing: -0.5px;
@@ -86,7 +90,7 @@
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
       cursor: pointer;
       transition: background-color 0.2s, transform 0.1s;
-      flex-shrink: 0; /* Evita que se aplaste */
+      flex-shrink: 0;
     }
 
     .profile-chip:active { transform: scale(0.96); }
@@ -104,7 +108,7 @@
       font-size: 13px;
       font-weight: 500;
       color: var(--md-sys-color-on-surface);
-      display: none; /* Oculto en pantallas muy pequeñas */
+      display: none;
     }
     
     @media (min-width: 360px) { .profile-name { display: block; } }
@@ -188,9 +192,9 @@
     .badge-vencido { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
     .badge-ok { background: #e7f2fa; color: #004a77; }
 
-    /* DETALLES (BUG FIX) */
+    /* DETALLES */
     .details {
-      display: none; /* Se alterna con JS */
+      display: none;
       padding-top: 16px; margin-top: 12px;
       border-top: 1px dashed var(--md-sys-color-outline-variant);
       font-size: 14px; color: var(--md-sys-color-on-surface-variant);
@@ -237,59 +241,41 @@
       font-weight: 500; font-size: 14px; cursor: pointer;
     }
 
-    /* LOADER & TOTAL */
+    /* LOADER */
     .loader-container { display: flex; justify-content: center; padding: 40px; }
     .spinner { width: 40px; height: 40px; border: 4px solid #fff; border-top-color: var(--md-sys-color-primary); border-radius: 50%; animation: spin 1s infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-/* 3. TOTAL GENERAL: Diseño M3 Refinado */
+    /* CORRECCIÓN 3: TOTAL FLOTANTE REDISEÑADO (Gris M3) */
     .total-fab {
       position: fixed; 
       bottom: 24px; 
       left: 50%; 
       transform: translateX(-50%);
-      /* Usamos Inverse Surface de M3 (Gris muy oscuro, no negro puro #000) */
-      background: #313033; 
-      color: #f4eff4; /* Blanco hueso suave */
-      padding: 12px 24px 12px 20px; /* Un poco más de aire a los lados */
-      border-radius: 16px; /* M3 usa esquinas menos redondas en FABs grandes a veces, pero full round está bien. Probemos 16px para variar o mantén full */
-      border-radius: 999px; /* Mantenemos estilo cápsula */
-      
-      box-shadow: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3); /* Elevación 3 */
-      
+      background: #313033; /* Gris Oscuro M3 */
+      color: #f4eff4; 
+      padding: 12px 24px 12px 20px;
+      border-radius: 999px; /* Cápsula */
+      box-shadow: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3);
       display: flex; 
       align-items: center; 
       gap: 16px; 
       z-index: 100; 
-      min-width: auto; /* Dejamos que el contenido defina el ancho */
     }
 
-    /* Etiqueta "Total" más suave */
     .label-total {
-        font-size: 13px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        color: rgba(244, 239, 244, 0.7); /* Blanco con opacidad */
-        text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: rgba(244, 239, 244, 0.7);
+      text-transform: uppercase;
     }
 
-    /* El número, el protagonista */
     .valor-total-fab {
-        font-size: 18px;
-        font-weight: 600;
-        color: #fff;
-        font-family: 'Roboto Flex', sans-serif;
-    }
-
-    /* 2. OCULTAR SCROLLBAR (Para que parezca app nativa) */
-    /* Para Chrome, Safari y Opera */
-    body::-webkit-scrollbar {
-      display: none;
-    }
-    /* Para IE, Edge y Firefox */
-    body {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      font-family: 'Roboto Flex', sans-serif;
     }
   </style>
 </head>
@@ -325,9 +311,9 @@
   </main>
 
   <div class="total-fab" id="totalFab" style="display: none;">
-      <span class="label-total">Total</span>
-      <span id="txtTotal" class="valor-total-fab">$ 0</span>
-    </div>
+    <span class="label-total">Total</span>
+    <span id="txtTotal" class="valor-total-fab">$ 0</span>
+  </div>
 
   <div id="aboutModal" class="dialog-overlay" onclick="cerrarModal(event)">
     <div class="dialog-card">
@@ -339,6 +325,7 @@
   </div>
 
   <script>
+    // RECUERDA: PEGA AQUÍ LA URL "EXEC" DE TU APPS SCRIPT
     const API_URL = "https://script.google.com/macros/s/AKfycbzs73gRIiUT6sBwcValnYGeKhrYwGQTNOpnrqY_W3boIMTb6CX-4_nx8EdNSuNlSxmq/exec";
 
     let CACHE_DATOS = [];
@@ -354,7 +341,6 @@
     }
     
     function cerrarModal(e) {
-      // Cierra solo si das click en el fondo oscuro (overlay), no en la tarjeta
       if (e.target.className === 'dialog-overlay') {
         e.target.style.display = 'none';
       }
@@ -429,9 +415,7 @@
         const card = document.createElement('div');
         card.className = 'card';
         
-        // BUG FIX: EVENTO DE CLIC REPARADO
         card.onclick = (e) => {
-          // Buscamos el div 'details' dentro de ESTA tarjeta
           const detallesDiv = card.querySelector('.details');
           if (detallesDiv.style.display === 'block') {
             detallesDiv.style.display = 'none';
